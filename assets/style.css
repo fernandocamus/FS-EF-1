@@ -1,0 +1,28 @@
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('../assets/img/fondo.jpg');
+}
+
+.extracto p {
+    text-align: center;
+    font-size: 20px;
+    color: #333;
+    line-height: 1.5;
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.container-presentacion {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Mostrar solo al pasar el mouse */
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+    position: absolute;
+    top: 100%; /* justo debajo del avatar */
+    left: 50%; /* centrar horizontal respecto al avatar */
+    transform: translateX(-50%); /* ajustar centramiento */
+    min-width: 150px; /* ancho mínimo */
+}
