@@ -103,7 +103,13 @@ function validacionRegistro() {
 // login
 function iniciarSesion(correo, password) {
     var lista = JSON.parse(localStorage.getItem("usuariosRegistrados") || "[]");
-    var usuario = lista.find(u => u.correo === correo.toLowerCase() && u.password === password);
+    var usuario = null;
+    for(var i = 0; i < lista.length; i++) {
+        if (lista[i].correo === correo.toLowerCase() && lista[i].password === password) {
+            usuario = lista[i];
+            break;
+        }
+    }
     if (usuario) {
         localStorage.setItem("usuarioActivo", JSON.stringify(usuario));
         return true;
@@ -140,24 +146,21 @@ function mostrarUsuarioNav() {
 }
 
 // BOTONES
-$(document).ready(function() {
-    mostrarUsuarioNav();
+mostrarUsuarioNav();
 
-    // REGISTRO
-    $("#btnRegistrar").click(validacionRegistro);
+// REGISTRO
+$("#btnRegistrar").click(validacionRegistro);
 
-    // LOGIN
-    $("#btnLogin").click(function() {
-        var correo = $("#correo").val().trim();
-        var password = $("#password").val();
-        if (iniciarSesion(correo, password)) {
-            alert("Login exitoso");
-            location.href = "index.html";
-        } else {
-            $("#loginResultado").html("<div class='alert alert-danger'>Correo o contraseña incorrectos.</div>");
-        }
-    });
-
-    // CAMBIAR CONTRASEÑA
-    $("#btnCambiarPass").click(cambiarPassword);
+// LOGIN
+$("#btnLogin").click(function() {
+    var correo = $("#correo").val().trim();
+    var password = $("#password").val();
+    if (iniciarSesion(correo, password)) {
+        location.href = "index.html";
+    } else {
+        $("#loginResultado").html("<div class='alert alert-danger'>Correo o contraseña incorrectos.</div>");
+    }
 });
+
+// CAMBIAR CONTRASEÑA
+$("#btnCambiarPass").click(cambiarPassword);
