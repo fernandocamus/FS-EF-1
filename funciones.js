@@ -45,6 +45,24 @@ function guardarUsuarioEnLocalStorage(nombre, correo, password, telefono) {
     localStorage.setItem("usuariosRegistrados", JSON.stringify(lista));
 }
 
+// CAMBIAR USUARIO EN LOCALSTORAGE
+function cambiarUsuarioEnLocalStorage(correo, password) {
+    var lista = JSON.parse(localStorage.getItem("usuariosRegistrados") || "[]");
+    var usuario = null;
+    for(var i = 0; i < lista.length; i++) {
+        if (lista[i]?.correo === correo.toLowerCase()) {
+            usuario = lista[i];
+            lista[i].password = password;
+            break;
+        }
+    }
+    if (usuario) {
+        localStorage.setItem("usuariosRegistrados", JSON.stringify(lista));
+        return true;
+    } else {
+        return false;
+    }
+}
 
 // VALIDACION REGISTRO
 function validacionRegistro() {
@@ -56,7 +74,7 @@ function validacionRegistro() {
     var confirmPassword = $("#confirmPassword");
     var telefono = $("#telefono");
 
-    // CREACION DE ARRAYS PARA ERRORES Y VACIONS
+    // ARRAYS PARA ERRORES Y VACIONS
     var camposVacios = [];
     var textoErrores = [];
 
@@ -100,6 +118,51 @@ function validacionRegistro() {
     return false;
 }
 
+function validacionCambioPassword() {
+    $("#resultado").empty();
+
+    var correo = $("#correo")
+    var password = $("#password")
+    var confirmPassword = $("#confirmPassword")
+
+    //ARRAYS PARA ERRORES Y VACIOS
+    var camposVacios = [];
+    var textoErrores = [];
+
+    //VALIDAR QUE NO SEA VACIO
+    if (!validacionVacio(correo)) camposVacios.push("Correo electrónico");
+    if (!validacionVacio(password)) camposVacios.push("Contraseña");
+    if (!validacionVacio(confirmPassword)) camposVacios.push("Confirmación de contraseña");
+
+    // VALIDACIONES ESPECIFICAS
+    if (validacionVacio(correo)) {
+        var correoVal = correo.val().trim();
+        if (!validacionCorreo(correoVal)) textoErrores.push("El formato del correo no es válido.");
+        else if (!correoEsDuoc(correoVal)) textoErrores.push("El correo debe pertenecer al dominio @duoc.cl.");
+        else if (!esCorreoUnico(correoVal)) textoErrores.push("El correo ya está registrado en el sistema.");
+    }
+
+    if (validacionVacio(password) && !validacionPassword(password.val()))
+        textoErrores.push("La contraseña debe tener al menos 8 caracteres, incluir mayúscula, minúscula, número y carácter especial.");
+
+    if (validacionVacio(password) && validacionVacio(confirmPassword) && password.val() !== confirmPassword.val())
+        textoErrores.push("Las contraseñas no coinciden.");
+
+    if (camposVacios.length || textoErrores.length) {
+        var mensajeError = "<div class='alert alert-danger'>";
+        if (camposVacios.length) mensajeError += "<strong>Campos vacíos:</strong><br>• " + camposVacios.join("<br>• ") + "<br>";
+        if (textoErrores.length) mensajeError += "<strong>Errores de formato:</strong><br>• " + textoErrores.join("<br>• ");
+        mensajeError += "</div>";
+        $("#resultado").html(mensajeError);
+    } else {
+        cambiarUsuarioEnLocalStorage(correo.val().trim(), password.val());
+        $("#resultado").html("<div class='alert alert-success'> Cambio de contraseña completado correctamente.</div>");
+        $("#formRegistro")[0].reset();
+    }
+
+    return false;
+}
+
 // login
 function iniciarSesion(correo, password) {
     var lista = JSON.parse(localStorage.getItem("usuariosRegistrados") || "[]");
@@ -113,7 +176,9 @@ function iniciarSesion(correo, password) {
     if (usuario) {
         localStorage.setItem("usuarioActivo", JSON.stringify(usuario));
         return true;
-    } else return false;
+    } else {
+        return false;
+    }
 }
 
 // PERFIL E INFORMACION
@@ -163,4 +228,4 @@ $("#btnLogin").click(function() {
 });
 
 // CAMBIAR CONTRASEÑA
-$("#btnCambiarPass").click(cambiarPassword);
+$("#btnCambiarPass").click(validacionCambioPassword);

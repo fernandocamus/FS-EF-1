@@ -21,8 +21,8 @@ body {
 .nav-item.dropdown:hover .dropdown-menu {
     display: block;
     position: absolute;
-    top: 100%; /* justo debajo del avatar */
-    left: 50%; /* centrar horizontal respecto al avatar */
-    transform: translateX(-50%); /* ajustar centramiento */
-    min-width: 150px; /* ancho mínimo */
+    top: 100%;
+    left: 15%;
+    transform: translateX(-50%);
+    min-width: 190px;
 }
